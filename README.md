@@ -39,3 +39,20 @@ To receive real webhook events on a local machine, GitHub must be able to delive
 - https://docs.github.com/en/apps/creating-github-apps/writing-code-for-a-github-app/quickstart
 - https://probot.github.io/docs/
 - https://medium.com/@JoshuaTheMiller/go-go-github-apps-d1b4bb26812b
+
+## API-first operation (no webhook required)
+
+A separate **read-only Octokit CLI** now supports App/installation authentication and GitHub API metadata lookup without a running Probot server, Cloudflare Tunnel, webhook secret, or public domain.
+
+```bash
+npm install
+npm run build
+export APP_ID=5554493
+export PRIVATE_KEY_PATH=/absolute/path/to/app-private-key.pem
+npm run cli -- installations
+npm run cli -- repos --installation 177191086
+npm run cli -- runs --installation 177191086 --repo erikg84/apk-signing-poc-app
+npm run cli -- artifacts --installation 177191086 --repo erikg84/apk-signing-poc-app --run 41212205303
+```
+
+The existing Probot webhook handler remains optional; it is not involved in these commands. For the full contract see [API-first operation](docs/API_FIRST.md). Authentication requires local private-key access, so the CLI cannot be exercised with credentials from GitHub Actions. The Python signing service remains independent and unchanged.
