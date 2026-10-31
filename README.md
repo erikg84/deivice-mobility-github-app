@@ -99,3 +99,7 @@ This also resolves the earlier GitHub Actions **billing restriction** for the si
 Android toolchain qualified in place, no changes needed: Android SDK platform 35 + build-tools 35.0.0 + platform-tools already present at `~/Library/Android/sdk`; JDK 17 (Microsoft Build of OpenJDK 17.0.17) available via `setup-java`. Gradle 8.9 was additionally installed by hand at `~/gradle-8.9` and used to run `gradle :app:assembleRelease --no-daemon` locally before dispatching the GitHub workflow — build succeeded, producing `app-release-unsigned.apk` (620953 bytes, SHA-256 `94a5578ba33960f8e4e3e1b42ad84ade4e5e1b068e2caef76e9ede6a1907708d`, application ID `com.example.signingpoc`, confirmed unsigned via `apksigner verify` failing with `Missing META-INF/MANIFEST.MF`). The CI run above rebuilt the same commit independently and uploaded its own artifact (`13055068869`); their SHA-256 values were not cross-diffed byte-for-byte in this pass since the CI artifact ZIP wasn't separately re-downloaded, but both are reproducible builds of the same source at the same commit.
 
 No signing key, JFrog credential, or GitHub App private key was installed on any of these three CI runners.
+
+## Multi-application onboarding foundation (2026-10-31)
+
+See [the signer-owned registry and acceptance gates](docs/MULTI_APP_ONBOARDING.md). Only the existing POC repository is approved today. The registry is **not** a completed second-application onboarding or an authorization claim from the GitHub App descriptor.
