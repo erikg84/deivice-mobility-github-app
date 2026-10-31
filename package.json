@@ -10,10 +10,12 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --import tsx --test test/*.test.ts",
-    "start": "probot run ./dist/index.js"
+    "start": "probot run ./dist/index.js",
+    "cli": "node dist/cli.js"
   },
   "dependencies": {
-    "probot": "^14.3.2"
+    "probot": "^14.3.2",
+    "@octokit/app": "^16.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
