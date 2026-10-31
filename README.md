@@ -16,6 +16,8 @@ flowchart TD
 
 An installed GitHub App sends signed webhooks to Probot. The handler identifies completed workflow runs, logs a generic envelope, and can query GitHub metadata using the installation-scoped Octokit client. No downstream service is invoked in this initial scaffold. Consumers must independently authorize incoming requests and validate artifacts.
 
+**Live status (Phase 5, 2026-10-31):** a real signed `workflow_run.completed` webhook was delivered by GitHub through a Cloudflare Quick Tunnel to Probot running on a MacBook and processed successfully (HTTP 200), including a successful redelivery. See `docs/VALIDATION.md` for delivery IDs, run correlation, and the one known limitation (the test repo's self-hosted build runner was offline, so the webhook path is proven but the APK build itself did not execute).
+
 ## Getting started
 
 Use Node.js 22 or newer and npm. Run `npm install`, `npm run typecheck`, `npm test`, `npm run build`, then `npm start`. Copy `.env.example` to `.env` and set `APP_ID`, `PRIVATE_KEY` and `WEBHOOK_SECRET` with values from your own GitHub App registration. Never commit credentials.

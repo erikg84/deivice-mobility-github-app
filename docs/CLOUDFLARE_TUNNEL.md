@@ -1,0 +1,30 @@
+# Cloudflare Tunnel — Live Configuration (Phase 5)
+
+This document supersedes the Phase 2–4 reports (`CLOUDFLARE_TUNNEL-PHASE2-REPORT.md`, `-PHASE3-REPORT.md`, `-PHASE4-FINAL-REPORT.md`) with the final, verified state. Those reports are kept for history; this file is the current reference.
+
+## Topology
+
+```
+GitHub  --signed webhook-->  Cloudflare Quick Tunnel  --local forward-->  cloudflared (MacBook)  -->  Probot 14.3.5 (127.0.0.1:3100)
+```
+
+- **Tunnel type:** Cloudflare Quick Tunnel (`trycloudflare.com`), not a named/persistent tunnel. The public hostname changes if the tunnel process restarts.
+- **Current public URL:** `https://connected-tahoe-seats-chelsea.trycloudflare.com`
+- **Local target:** `http://127.0.0.1:3100`
+- **Probot webhook path:** `/api/github/webhooks`
+- **Process:** `cloudflared tunnel --url http://127.0.0.1:3100`, running on the MacBook.
+
+## Verified behavior
+
+| Check | Result |
+|---|---|
+| Unsigned `POST /api/github/webhooks` to the tunnel URL | `400 {"error":"Required headers missing: x-github-event, x-hub-signature-256, x-github-delivery"}` — correct Probot signature-validation rejection, not a routing failure |
+| Real signed GitHub delivery through the tunnel | `200 OK`, correlated with Probot's structured log (see `docs/VALIDATION.md`) |
+| Redelivery through the tunnel | `200 OK`, identical payload received again |
+
+## Operational notes
+
+- A Quick Tunnel has no authentication token to leak and is not committed anywhere in this repository.
+- Because the hostname is ephemeral, the GitHub App's webhook URL (`https://api.github.com/app/hook/config`, settable only via the GitHub App's own JWT or the web UI) must be re-pointed whenever the tunnel is restarted. As of this report it already matches the current tunnel hostname.
+- For a durable deployment, replace the Quick Tunnel with a named Cloudflare Tunnel bound to a Cloudflare-managed DNS record, so the webhook URL no longer changes on restart. That migration is out of scope for this phase.
+- Do not modify the Mac Studio Next.js service from this workflow; the tunnel and Probot process here run on the MacBook only.

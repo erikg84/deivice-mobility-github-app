@@ -6,4 +6,5 @@ dist/
 *.pem
 *.key
 coverage/
+.secrets
 .DS_Store
