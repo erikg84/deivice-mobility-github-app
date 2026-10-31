@@ -103,3 +103,9 @@ No signing key, JFrog credential, or GitHub App private key was installed on any
 ## Multi-application onboarding foundation (2026-10-31)
 
 See [the signer-owned registry and acceptance gates](docs/MULTI_APP_ONBOARDING.md). Only the existing POC repository is approved today. The registry is **not** a completed second-application onboarding or an authorization claim from the GitHub App descriptor.
+
+## Registry-driven source verification — 2026-10-31
+
+The Python signer now selects an approved application policy from its signer-owned registry **before** minting an installation token. GitHub provenance lookups, completed-run resolution, artifact access, and qualification metadata paths derive from that approved repository rather than a fixed dummy-repository path. Repository-scoped token issuance accepts the selected repository ID. Unknown repositories and mismatched workflow policies fail closed. The original POC policy remains registered unchanged.
+
+**Scope limit:** The service still has POC-specific command-line entry points, run fixtures, package checks, and signing/publication arrangements. The registry provides a foundation for policy-driven source qualification; registering and fully signing a second application requires separate tests, runner evidence, and an approved signing profile. No signing or publication was triggered by this change. The App JWT package remains required; no dependency removal was justified by the current import analysis. Historical proof reports are intentionally unchanged.
