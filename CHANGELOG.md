@@ -1,5 +1,14 @@
 # Changelog
 
+## API-first final acceptance (2026-10-31)
+
+- Fast-forwarded `main` to pick up the API-first Octokit CLI (`src/cli.ts`) added since Phase 5 (reference commit `7c69d3235a732affe371927642a4c6b0ac475e57`).
+- Repaired `package-lock.json`: `@octokit/app` and its transitive dependencies (`@octokit/auth-app`, `@octokit/core`, `@octokit/webhooks`, etc.) were missing from the committed lockfile; `npm install --package-lock-only` restored them. `npm ci`, `npm run typecheck`, `npm test` (7/7), and `npm run build` all pass.
+- Authenticated as the real GitHub App (`5554493`) and installation (`177191086`) and ran all four CLI commands (`installations`, `repos`, `runs`, `artifacts`) against live GitHub data; both authorized repositories were returned correctly, and the `artifacts` query correctly returned an empty array for run `41212205303` (no build job ever executed for that run).
+- Verified webhook independence directly: stopped the Probot process and the Cloudflare Quick Tunnel and unset the webhook-related env vars, then re-ran the CLI — identical results, confirming no dependency on the webhook listener, tunnel, secret, or any public endpoint.
+- Updated `README.md` (carried over from the CLI commits), `docs/API_FIRST.md`, `docs/ARCHITECTURE.md`, and `docs/VALIDATION.md` with the verified evidence.
+- No artifact download, APK signing, or Artifactory publishing occurred or is implemented in this repository.
+
 ## Phase 5 — Live webhook integration verified (2026-10-31)
 
 - Resolved the webhook secret locally (pre-existing, gitignored `.env`/`.secrets`); no new secret generation or GitHub-side rotation was required — the value and the GitHub App's configured webhook URL already matched.

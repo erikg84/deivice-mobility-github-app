@@ -24,6 +24,10 @@ The Probot webhook handler remains available using `npm start`, but the API CLI 
 
 To stop using webhooks, disable deliveries in the GitHub App settings. Do not delete the App or revoke its private key: those credentials enable the API-only path. Cloudflare tunnel services can be stopped by the local operator after confirming they're no longer used.
 
+## Verified (2026-10-31)
+
+With Probot and the Cloudflare Quick Tunnel both stopped and no `WEBHOOK_SECRET` set, all four commands were run against the real registered App (`5554493`) and installation (`177191086`) and returned correct, live GitHub data — see `docs/VALIDATION.md` for the full output. This confirms the API-first path has no dependency on the webhook listener, tunnel, or secret.
+
 ## Future contract
 
 A separate signing service may accept a workflow run ID, repository ID, and installation context, and must independently verify authorization and artifact provenance. Do not transfer APK-specific policy into this general-purpose GitHub integration repository.

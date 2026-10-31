@@ -33,3 +33,18 @@ There is no direct GitHub App registration action exposed in this repository. An
 - **Runner limitation:** the test repo's workflow (`Build unsigned POC APK`) targets a self-hosted runner (`macstudio-apk-signing-poc`) that was offline during this test, so GitHub Actions never executed the build job itself (run `41212205303` ended `cancelled` after being manually cancelled while queued). This is independent of webhook delivery — GitHub emits `workflow_run` events (`requested`, `in_progress`, `completed`) regardless of whether a runner picks up the job, and all three were delivered successfully.
 - **Webhook delivery:** fully verified end-to-end — GitHub → Cloudflare Quick Tunnel (`https://connected-tahoe-seats-chelsea.trycloudflare.com`) → `cloudflared` on the MacBook → Probot 14.3.5 on `127.0.0.1:3100` → generic event handler. Every delivery, including the redelivery, returned HTTP 200.
 - **No side effects:** the handler only logs a generic envelope; no signing or Artifactory calls exist in the codebase.
+
+## Live acceptance test (API-first CLI, 2026-10-31)
+
+Ran the read-only Octokit CLI (`src/cli.ts`) against the real registered App with Probot and the Cloudflare Quick Tunnel **stopped** and no `WEBHOOK_SECRET` set, to prove the API path needs neither:
+
+| Command | Result |
+|---|---|
+| `npm run cli -- installations` | `[{"id":177191086,"account":"erikg84","target_type":"User"}]` |
+| `npm run cli -- repos --installation 177191086` | Both authorized repos returned: `erikg84/apk-signing-poc-app` (private) and `erikg84/deivice-mobility-github-app` (public) |
+| `npm run cli -- runs --installation 177191086 --repo erikg84/apk-signing-poc-app` | 10 runs returned, including run `41212205303` with `conclusion: "cancelled"`, matching the Phase 5 record |
+| `npm run cli -- artifacts --installation 177191086 --repo erikg84/apk-signing-poc-app --run 41212205303` | `[]` — expected, since that run's job never executed (self-hosted runner offline) |
+
+`npm ci`, `npm run typecheck`, `npm test` (7/7 passing), and `npm run build` all passed on the synced lockfile (`package-lock.json` was repaired via `npm install --package-lock-only` to include `@octokit/app` and its transitive dependencies, which were missing from the committed lockfile).
+
+No artifact bytes were downloaded, no APK signing or Artifactory call occurred, and no webhook, Probot process, Cloudflare Tunnel, or public endpoint was required for any of the above.

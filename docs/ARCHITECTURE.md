@@ -28,6 +28,18 @@ sequenceDiagram
   Note over PB,DS: No downstream dispatch implemented in this scaffold
 ```
 
+## API-first path (verified, no webhook required)
+
+```mermaid
+flowchart LR
+  OP[Operator shell<br/>APP_ID + PRIVATE_KEY_PATH] --> CLI[src/cli.ts<br/>Octokit App/getInstallationOctokit]
+  CLI -->|JWT then installation token| API[GitHub REST API]
+  API --> CLI
+  CLI --> OUT[JSON metadata on stdout]
+```
+
+`npm run cli -- installations|repos|runs|artifacts` authenticates directly as the App and as the installation, using only local credentials. It needs no Probot process, no Cloudflare Tunnel, no webhook secret, and no public endpoint — verified by running it with both stopped (see `docs/VALIDATION.md`). It is read-only: no artifact bytes are downloaded and no signing/publishing call is made.
+
 ## Independence
 
 No signing credentials or Android build logic belongs in this repository. A future adapter must not treat webhook contents as permission to sign or publish. Downstream services verify their own authorization and artifact provenance.
