@@ -20,3 +20,9 @@ The prior `production_poc_policy()` resolves this existing entry. This is an inc
 ## Current verification boundary
 
 The registry foundation and unit tests are added; the Mac Studio self-hosted workflow will validate them. This milestone does **not** invoke a signing backend, change key custody, trigger a new APK build, or publish to JFrog. Existing GitHub App API-first read-only qualification of the original repository stays the historical baseline.
+
+## Registry-driven source verification — 2026-10-31
+
+The Python signer now selects an approved application policy from its signer-owned registry **before** minting an installation token. GitHub provenance lookups, completed-run resolution, artifact access, and qualification metadata paths derive from that approved repository rather than a fixed dummy-repository path. Repository-scoped token issuance accepts the selected repository ID. Unknown repositories and mismatched workflow policies fail closed. The original POC policy remains registered unchanged.
+
+**Scope limit:** The service still has POC-specific command-line entry points, run fixtures, package checks, and signing/publication arrangements. The registry provides a foundation for policy-driven source qualification; registering and fully signing a second application requires separate tests, runner evidence, and an approved signing profile. No signing or publication was triggered by this change. The App JWT package remains required; no dependency removal was justified by the current import analysis. Historical proof reports are intentionally unchanged.
