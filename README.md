@@ -72,3 +72,30 @@ A **real successful October 29 workflow artifact** has been located and download
 GitHub Actions jobs are configured to target `[self-hosted, macOS, ARM64, macstudio-apk-signing-poc]`. This avoids consuming GitHub-hosted runner compute minutes, but requires an **online runner with all four labels available to each repository**. A repository-scoped runner registered for one repository is not automatically available to the other two. Configure separate runner instances on Mac Studio (with separate work directories) or another supported runner-sharing scope, and install the local Node.js 22, Python 3.12, and Android/JDK tooling needed by each workflow. Never reuse the same runner registration or work directory concurrently. Some account/billing restrictions may still prevent workflows from starting even with a self-hosted runner; validate actual dispatch rather than treating this configuration as proof of recovery.
 
 Do not alter the independent APK signing service, keys, or unrelated local processes when registering the runners. A queued workflow is **not** a passing build.
+
+### Verified live — 2026-10-31 (later same day)
+
+All three repository-scoped runners are registered, online, and installed as persistent `launchd` services on the Mac Studio (`192.168.68.129`, macOS 26.5, arm64, 32 GB RAM):
+
+| Repository | Runner name | Directory | Service label |
+|---|---|---|---|
+| `erikg84/apk-signing-poc-app` | `macstudio-apk-signing-poc` | `~/actions-runner` | `actions.runner.erikg84-apk-signing-poc-app.macstudio-apk-signing-poc` |
+| `erikg84/deivice-mobility-github-app` | `macstudio-device-mobility-app` | `~/actions-runner-github-app` | `actions.runner.erikg84-deivice-mobility-github-app.macstudio-device-mobility-app` |
+| `erikg84/mobility-apk-signing-service` | `macstudio-mobility-signer` | `~/actions-runner-mobility-signer` | `actions.runner.erikg84-mobility-apk-signing-service.macstudio-mobility-signer` |
+
+Each is a separate repository-level registration with its own `_work` directory, so a job for one repository cannot be scheduled on another's runner regardless of labels. The pre-existing `quake`/`polity` CMP runners and the KAOS service on this same host were left untouched and confirmed still running throughout.
+
+All three workflows passed for real on these runners:
+- `Build unsigned POC APK` — run [41234551796](https://github.com/erikg84/apk-signing-poc-app/actions/runs/41234551796), commit `cdf9077bba146d830ae7d2438026398f84e4142b`, artifact `unsigned-apk-cdf9077bba146d830ae7d2438026398f84e4142b` (id `13055068869`, `617354` bytes, unexpired).
+- `Validate GitHub App` — run [41234543755](https://github.com/erikg84/deivice-mobility-github-app/actions/runs/41234543755), commit `0fddfaee1092cbfda1fc2bf7e58c77f2d0a5f5f2`.
+- `Validate signer service (no secrets)` — run [41235474784](https://github.com/erikg84/mobility-apk-signing-service/actions/runs/41235474784), commit `764b688a891aa2d5920400f62857c8a34e0fc325`.
+
+One real failure was found and fixed along the way: `actions/setup-python@v5` failed on the self-hosted runner with `mkdir: /Users/runner: Permission denied` (it assumes the GitHub-hosted runner's conventional home directory). Fixed by dropping that step and using the runner's own Homebrew Python 3.14 directly; since that Python is a PEP 668 externally-managed environment, the dependency install needed `python3 -m pip install --user --break-system-packages ...`.
+
+This also resolves the earlier GitHub Actions **billing restriction** for the signer repo's workflow — not by bypassing billing, but because self-hosted runner compute is not metered against GitHub Actions minutes at all, unlike the `ubuntu-latest` hosted runner it replaced.
+
+**Restart recovery verified:** all three `Runner.Listener` processes were killed directly; `launchd` restarted each one within seconds under new PIDs, and all three reported `online` to GitHub again afterward.
+
+Android toolchain qualified in place, no changes needed: Android SDK platform 35 + build-tools 35.0.0 + platform-tools already present at `~/Library/Android/sdk`; JDK 17 (Microsoft Build of OpenJDK 17.0.17) available via `setup-java`. Gradle 8.9 was additionally installed by hand at `~/gradle-8.9` and used to run `gradle :app:assembleRelease --no-daemon` locally before dispatching the GitHub workflow — build succeeded, producing `app-release-unsigned.apk` (620953 bytes, SHA-256 `94a5578ba33960f8e4e3e1b42ad84ade4e5e1b068e2caef76e9ede6a1907708d`, application ID `com.example.signingpoc`, confirmed unsigned via `apksigner verify` failing with `Missing META-INF/MANIFEST.MF`). The CI run above rebuilt the same commit independently and uploaded its own artifact (`13055068869`); their SHA-256 values were not cross-diffed byte-for-byte in this pass since the CI artifact ZIP wasn't separately re-downloaded, but both are reproducible builds of the same source at the same commit.
+
+No signing key, JFrog credential, or GitHub App private key was installed on any of these three CI runners.

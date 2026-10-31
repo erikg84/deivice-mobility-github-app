@@ -1,5 +1,11 @@
 # Changelog
 
+## Mac Studio self-hosted runner live (2026-10-31)
+
+- Registered and brought online a dedicated self-hosted runner `macstudio-device-mobility-app` on the Mac Studio (repository-scoped, own `_work` dir, persistent `launchd` service).
+- `Validate GitHub App` ran for real on this runner: run 41234543755, commit 0fddfaee1092cbfda1fc2bf7e58c77f2d0a5f5f2, conclusion success.
+- Verified restart recovery (killed the listener process, launchd restarted it, GitHub reported it online again).
+
 ## Cross-repository artifact qualification (2026-10-31)
 
 - Ran the real `candidate` CLI command against run `40799940323` / artifact `12865143006`: emitted the exact credential-free descriptor; the same command against cancelled run `41212205303` correctly fails closed with `RUN_NOT_SUCCESSFUL`.
