@@ -22,3 +22,9 @@
 - Updated `README.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and added `docs/CLOUDFLARE_TUNNEL.md` with the live-verified architecture and evidence.
 
 **Known limitation:** the APK build itself did not execute in this test because the self-hosted runner for the test repository was offline. The webhook integration (GitHub → Cloudflare → Probot) is independently verified regardless of runner availability.
+
+---
+
+## API-first integration checkpoint — 2026-10-31
+
+The current integration design and verified-versus-pending acceptance gates are in [API-first artifact handoff](docs/API_FIRST_HANDOFF.md). The generic GitHub App (`erikg84/deivice-mobility-github-app`) has passed real installation-scoped read-only API tests without a webhook or Cloudflare. The Python signing service remains independent and retains artifact/provenance/signing/publication responsibility. The dummy app's most recent run `41212205303` was **cancelled with no artifact**, so no new cross-repository handoff or signing test is claimed. Previous POC signing receipts remain historical evidence, not proof of this new API-first integration. Webhook-specific instructions above describe an **optional legacy/event-driven path**, not a prerequisite for API-first usage.
