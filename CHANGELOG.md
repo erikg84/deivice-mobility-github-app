@@ -39,3 +39,9 @@
 ## API-first integration checkpoint — 2026-10-31
 
 The current integration design and verified-versus-pending acceptance gates are in [API-first artifact handoff](docs/API_FIRST_HANDOFF.md). The generic GitHub App (`erikg84/deivice-mobility-github-app`) has passed real installation-scoped read-only API tests without a webhook or Cloudflare. The Python signing service remains independent and retains artifact/provenance/signing/publication responsibility. The dummy app's most recent run `41212205303` was **cancelled with no artifact**, so no new cross-repository handoff or signing test is claimed. Previous POC signing receipts remain historical evidence, not proof of this new API-first integration. Webhook-specific instructions above describe an **optional legacy/event-driven path**, not a prerequisite for API-first usage.
+
+## Multi-application registry foundation — 2026-10-31
+
+- Added shared `docs/MULTI_APP_ONBOARDING.md` with explicit onboarding and fail-closed acceptance gates.
+- Python signer now has an immutable signer-owned repository registry and tests; existing POC policy is resolved through its approved entry. No additional repository is approved and no new signing/publishing is performed.
+- Preserved API-first candidate descriptor semantics and independent signer-side provenance verification.
