@@ -57,7 +57,7 @@ export async function main(args: string[]): Promise<void> {
           octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}",{owner,repo,run_id}),
           octokit.request("GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}",{owner,repo,artifact_id})
         ]);
-        output=candidateDescriptor({installationId,repository:{id:Number(repository.id),full_name:repository.full_name ?? ""},run:{id:Number(run.id),run_attempt:run.run_attempt ?? 0,status:run.status,conclusion:run.conclusion},artifact:{id:artifact.id,expired:artifact.expired,workflow_run:artifact.workflow_run ? {id:artifact.workflow_run.id ?? 0} : null}});
+        output=candidateDescriptor({installationId,repository:{id:Number(repository.id),full_name:repository.full_name ?? ""},run:{id:Number(run.id),run_attempt:run.run_attempt ?? 0,status:run.status ?? "unknown",conclusion:run.conclusion},artifact:{id:artifact.id,expired:artifact.expired,workflow_run:artifact.workflow_run ? {id:artifact.workflow_run.id ?? 0} : null}});
       } else {
         const run_id=positiveId(options.run,"--run");
         const {data:{artifacts:data}}=await octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts",{owner,repo,run_id,per_page:100});
