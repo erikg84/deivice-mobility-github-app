@@ -31,11 +31,21 @@ The example artifact ID is a **placeholder**. Run `41212205303` was cancelled wi
 
 The descriptor is a lookup hint, **not** an authorization decision. For example, an installation ID, run ID, or artifact ID from a caller cannot override signer policy. The signer determines expected workflow path/ID, ref, commit, run conclusion, artifact name, application ID and digest from independently checked sources and local policy. Unknown versions or ambiguous run/artifact matches must be rejected.
 
+## Candidate export command
+
+For a **successful** completed run with an actual unexpired artifact, use:
+
+```bash
+npm run cli -- candidate --installation 177191086 --repo erikg84/apk-signing-poc-app --run <successful-run-id> --artifact <real-artifact-id>
+```
+
+The command queries the repository, run and artifact with installation-scoped credentials. It refuses cancelled/unsuccessful runs and mismatched or expired artifacts, and prints only the credential-free descriptor. It does **not** authorize signing or dispatch to the Python signer. The signer must re-verify everything independently.
+
 ## Current capabilities and gaps
 
 - **Verified:** App JWT and installation-token authentication; read-only installations, repositories, runs and artifacts queries; GitHub App CLI without Cloudflare/Probot; tests and CI.
 - **Previously proven in independent signing POC:** protected GitHub artifact retrieval, provenance validation, APK signing, and JFrog readback.
-- **Not yet implemented:** automated metadata transfer between these repositories, invocation by the TypeScript CLI, and a fresh end-to-end demonstration on one newly built APK. Do not interpret the descriptor example as an executed handoff.
+- **Now implemented:** manual read-only candidate descriptor export, including successful-run and artifact/run checks. **Not yet implemented:** automated metadata transfer between these repositories, invocation by the TypeScript CLI, and a fresh end-to-end demonstration on one newly built APK. Do not interpret the descriptor example as an executed handoff.
 - **Operational dependency:** a successful, non-expired unsigned APK workflow artifact is needed for the next live test. The Mac Studio runner assigned to the dummy app's latest attempt was offline.
 
 ## Next acceptance
