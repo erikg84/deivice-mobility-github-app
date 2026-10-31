@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { App } from "@octokit/app";
+import { candidateDescriptor } from "./candidate.js";
 
 export function parseArgs(args: string[]): { command: string; options: Record<string,string> } {
   const [command, ...rest] = args;
@@ -24,10 +25,10 @@ export function repoParts(s: string | undefined): { owner:string;repo:string } {
 export async function main(args: string[]): Promise<void> {
   const {command,options}=parseArgs(args);
   if (command === "help") {
-    console.log("Usage: npm run cli -- <installations|repos|runs|artifacts> [--installation ID] [--repo owner/name] [--run ID]\nRead-only API commands; requires APP_ID and PRIVATE_KEY_PATH.");
+    console.log("Usage: npm run cli -- <installations|repos|runs|artifacts|candidate> [--installation ID] [--repo owner/name] [--run ID]\nRead-only API commands; requires APP_ID and PRIVATE_KEY_PATH.");
     return;
   }
-  if (!["installations","repos","runs","artifacts"].includes(command)) throw new Error("Unknown command; run help");
+  if (!["installations","repos","runs","artifacts","candidate"].includes(command)) throw new Error("Unknown command; run help");
   const appId=positiveId(process.env.APP_ID,"APP_ID");
   const path=process.env.PRIVATE_KEY_PATH;
   if (!path) throw new Error("PRIVATE_KEY_PATH is required");
@@ -48,6 +49,15 @@ export async function main(args: string[]): Promise<void> {
       if (command==="runs") {
         const {data:{workflow_runs:data}}=await octokit.request("GET /repos/{owner}/{repo}/actions/runs",{owner,repo,per_page:100});
         output=data.slice(0,25).map(r=>({id:r.id,name:r.name,status:r.status,conclusion:r.conclusion,head_sha:r.head_sha,url:r.html_url}));
+      } else if (command === "candidate") {
+        const run_id=positiveId(options.run,"--run");
+        const artifact_id=positiveId(options.artifact,"--artifact");
+        const [{data:repository},{data:run},{data:artifact}]=await Promise.all([
+          octokit.request("GET /repos/{owner}/{repo}",{owner,repo}),
+          octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}",{owner,repo,run_id}),
+          octokit.request("GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}",{owner,repo,artifact_id})
+        ]);
+        output=candidateDescriptor({installationId,repository:{id:repository.id,full_name:repository.full_name},run:{id:run.id,run_attempt:run.run_attempt,status:run.status,conclusion:run.conclusion},artifact:{id:artifact.id,expired:artifact.expired,workflow_run:artifact.workflow_run}});
       } else {
         const run_id=positiveId(options.run,"--run");
         const {data:{artifacts:data}}=await octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts",{owner,repo,run_id,per_page:100});
