@@ -45,3 +45,9 @@ The current integration design and verified-versus-pending acceptance gates are 
 - Added shared `docs/MULTI_APP_ONBOARDING.md` with explicit onboarding and fail-closed acceptance gates.
 - Python signer now has an immutable signer-owned repository registry and tests; existing POC policy is resolved through its approved entry. No additional repository is approved and no new signing/publishing is performed.
 - Preserved API-first candidate descriptor semantics and independent signer-side provenance verification.
+
+## Registry-driven source verification — 2026-10-31
+
+The Python signer now selects an approved application policy from its signer-owned registry **before** minting an installation token. GitHub provenance lookups, completed-run resolution, artifact access, and qualification metadata paths derive from that approved repository rather than a fixed dummy-repository path. Repository-scoped token issuance accepts the selected repository ID. Unknown repositories and mismatched workflow policies fail closed. The original POC policy remains registered unchanged.
+
+**Scope limit:** The service still has POC-specific command-line entry points, run fixtures, package checks, and signing/publication arrangements. The registry provides a foundation for policy-driven source qualification; registering and fully signing a second application requires separate tests, runner evidence, and an approved signing profile. No signing or publication was triggered by this change. The App JWT package remains required; no dependency removal was justified by the current import analysis. Historical proof reports are intentionally unchanged.
