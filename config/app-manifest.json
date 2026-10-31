@@ -1,0 +1,18 @@
+{
+  "name": "Device Mobility Development App",
+  "url": "https://github.com/erikg84/deivice-mobility-github-app",
+  "hook_attributes": {
+    "active": true,
+    "url": "https://example.invalid/api/github/webhooks"
+  },
+  "redirect_url": "https://example.invalid/github/callback",
+  "public": false,
+  "default_permissions": {
+    "actions": "read",
+    "metadata": "read"
+  },
+  "default_events": [
+    "workflow_run",
+    "installation"
+  ]
+}
