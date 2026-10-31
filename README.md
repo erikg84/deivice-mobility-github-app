@@ -56,3 +56,9 @@ npm run cli -- artifacts --installation 177191086 --repo erikg84/apk-signing-poc
 ```
 
 The existing Probot webhook handler remains optional; it is not involved in these commands. For the full contract see [API-first operation](docs/API_FIRST.md). Authentication requires local private-key access, so the CLI cannot be exercised with credentials from GitHub Actions. The Python signing service remains independent and unchanged.
+
+---
+
+## API-first integration checkpoint — 2026-10-31
+
+The current integration design and verified-versus-pending acceptance gates are in [API-first artifact handoff](docs/API_FIRST_HANDOFF.md). The generic GitHub App (`erikg84/deivice-mobility-github-app`) has passed real installation-scoped read-only API tests without a webhook or Cloudflare. The Python signing service remains independent and retains artifact/provenance/signing/publication responsibility. The dummy app's most recent run `41212205303` was **cancelled with no artifact**, so no new cross-repository handoff or signing test is claimed. Previous POC signing receipts remain historical evidence, not proof of this new API-first integration. Webhook-specific instructions above describe an **optional legacy/event-driven path**, not a prerequisite for API-first usage.
