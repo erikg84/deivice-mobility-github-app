@@ -66,3 +66,7 @@ A **real successful October 29 workflow artifact** has been located and download
 ## Final qualification checkpoint — 2026-10-31
 
 The candidate CLI was run with the real IDs above (not the placeholder) and emitted exactly the descriptor shown; the same command against cancelled run `41212205303` fails closed with `RUN_NOT_SUCCESSFUL`. The protected signer independently re-verified this artifact on its own host using only the GitHub App private key (`tools/check_github_app.py` and `tools/qualify_live_artifact.py`, both PASS/`qualified:true`, `signing_authorized:false`), and rejected a mismatched App/installation pair. See [artifact qualification evidence](API_FIRST_ARTIFACT_QUALIFICATION_20261031.md) for full output. This artifact was already signed and published once on 2026-10-29 (Dell host, replay ledger SIGNED); no new signing or publication was attempted or is proposed here.
+
+## Registry-driven signing-service integration (2026-10-31)
+
+The TypeScript CLI remains read-only and generic: its candidate descriptor is never signing authority. The independent Python signer now uses a service-owned application registry for approved repository policy, scoped installation tokens, and GitHub provenance/artifact paths. The existing POC is the sole approved entry; another app must be explicitly onboarded and independently qualified. Probot/Cloudflare is optional, not required for API-first operation. See [multi-app onboarding](MULTI_APP_ONBOARDING.md). No new signing or publication is claimed by this update.
