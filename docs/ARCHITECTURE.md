@@ -51,3 +51,9 @@ Webhook reception requires a reachable HTTPS endpoint or a development relay. A 
 ## Testing boundaries
 
 Unit tests cover normalization and filtering. They do not by themselves prove live GitHub App registration, webhook delivery, installation permissions, deployment, or multi-repo interoperability — see `docs/VALIDATION.md` for the live evidence that closes that gap.
+
+---
+
+## API-first integration checkpoint — 2026-10-31
+
+The current integration design and verified-versus-pending acceptance gates are in [API-first artifact handoff](API_FIRST_HANDOFF.md). The generic GitHub App (`erikg84/deivice-mobility-github-app`) has passed real installation-scoped read-only API tests without a webhook or Cloudflare. The Python signing service remains independent and retains artifact/provenance/signing/publication responsibility. The dummy app's most recent run `41212205303` was **cancelled with no artifact**, so no new cross-repository handoff or signing test is claimed. Previous POC signing receipts remain historical evidence, not proof of this new API-first integration. Webhook-specific instructions above describe an **optional legacy/event-driven path**, not a prerequisite for API-first usage.
