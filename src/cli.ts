@@ -35,22 +35,22 @@ export async function main(args: string[]): Promise<void> {
   const app=new App({appId,privateKey});
   let output:unknown;
   if (command==="installations") {
-    const data=await app.octokit.paginate("GET /app/installations",{per_page:100});
+    const {data}=await app.octokit.request("GET /app/installations",{per_page:100});
     output=data.map(i=>({id:i.id,account:i.account?.login ?? null,target_type:i.target_type}));
   } else {
     const installationId=positiveId(options.installation,"--installation");
     const octokit=await app.getInstallationOctokit(installationId);
     if (command==="repos") {
-      const data=await octokit.paginate("GET /installation/repositories",{per_page:100});
+      const {data:{repositories:data}}=await octokit.request("GET /installation/repositories",{per_page:100});
       output=data.map(r=>({id:r.id,full_name:r.full_name,private:r.private}));
     } else {
       const {owner,repo}=repoParts(options.repo);
       if (command==="runs") {
-        const data=await octokit.paginate("GET /repos/{owner}/{repo}/actions/runs",{owner,repo,per_page:100});
+        const {data:{workflow_runs:data}}=await octokit.request("GET /repos/{owner}/{repo}/actions/runs",{owner,repo,per_page:100});
         output=data.slice(0,25).map(r=>({id:r.id,name:r.name,status:r.status,conclusion:r.conclusion,head_sha:r.head_sha,url:r.html_url}));
       } else {
         const run_id=positiveId(options.run,"--run");
-        const data=await octokit.paginate("GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts",{owner,repo,run_id,per_page:100});
+        const {data:{artifacts:data}}=await octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts",{owner,repo,run_id,per_page:100});
         output=data.map(a=>({id:a.id,name:a.name,size_in_bytes:a.size_in_bytes,expired:a.expired,archive_download_url:a.archive_download_url}));
       }
     }
