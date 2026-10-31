@@ -1,5 +1,10 @@
 # Changelog
 
+## Cross-repository artifact qualification (2026-10-31)
+
+- Ran the real `candidate` CLI command against run `40799940323` / artifact `12865143006`: emitted the exact credential-free descriptor; the same command against cancelled run `41212205303` correctly fails closed with `RUN_NOT_SUCCESSFUL`.
+- Confirmed the protected signer (`erikg84/mobility-apk-signing-service`) independently re-verified this artifact end-to-end (see that repo's changelog and `docs/API_FIRST_ARTIFACT_QUALIFICATION_20261031.md`). No signing or publishing occurred from this repository.
+
 ## API-first final acceptance (2026-10-31)
 
 - Fast-forwarded `main` to pick up the API-first Octokit CLI (`src/cli.ts`) added since Phase 5 (reference commit `7c69d3235a732affe371927642a4c6b0ac475e57`).

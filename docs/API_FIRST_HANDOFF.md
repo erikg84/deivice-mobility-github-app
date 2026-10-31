@@ -61,3 +61,8 @@ The signer retains final authority; no cross-repository trust is implicit.
 ## API-first verified artifact checkpoint — 2026-10-31
 
 A **real successful October 29 workflow artifact** has been located and downloaded: run `40799940323`, artifact `12865143006`. Its ZIP digest matches GitHub, and the enclosed unsigned APK digest matches both included checksum and metadata. See [artifact qualification evidence](API_FIRST_ARTIFACT_QUALIFICATION_20261031.md). This resolves the **missing-artifact discovery** blocker, but does **not** prove a newly executed TypeScript CLI handoff, independent Android binary validation, additional signing, or JFrog publication.
+
+
+## Final qualification checkpoint — 2026-10-31
+
+The candidate CLI was run with the real IDs above (not the placeholder) and emitted exactly the descriptor shown; the same command against cancelled run `41212205303` fails closed with `RUN_NOT_SUCCESSFUL`. The protected signer independently re-verified this artifact on its own host using only the GitHub App private key (`tools/check_github_app.py` and `tools/qualify_live_artifact.py`, both PASS/`qualified:true`, `signing_authorized:false`), and rejected a mismatched App/installation pair. See [artifact qualification evidence](API_FIRST_ARTIFACT_QUALIFICATION_20261031.md) for full output. This artifact was already signed and published once on 2026-10-29 (Dell host, replay ledger SIGNED); no new signing or publication was attempted or is proposed here.
