@@ -48,3 +48,9 @@ Ran the read-only Octokit CLI (`src/cli.ts`) against the real registered App wit
 `npm ci`, `npm run typecheck`, `npm test` (7/7 passing), and `npm run build` all passed on the synced lockfile (`package-lock.json` was repaired via `npm install --package-lock-only` to include `@octokit/app` and its transitive dependencies, which were missing from the committed lockfile).
 
 No artifact bytes were downloaded, no APK signing or Artifactory call occurred, and no webhook, Probot process, Cloudflare Tunnel, or public endpoint was required for any of the above.
+
+---
+
+## API-first integration checkpoint — 2026-10-31
+
+The current integration design and verified-versus-pending acceptance gates are in [API-first artifact handoff](API_FIRST_HANDOFF.md). The generic GitHub App (`erikg84/deivice-mobility-github-app`) has passed real installation-scoped read-only API tests without a webhook or Cloudflare. The Python signing service remains independent and retains artifact/provenance/signing/publication responsibility. The dummy app's most recent run `41212205303` was **cancelled with no artifact**, so no new cross-repository handoff or signing test is claimed. Previous POC signing receipts remain historical evidence, not proof of this new API-first integration. Webhook-specific instructions above describe an **optional legacy/event-driven path**, not a prerequisite for API-first usage.
