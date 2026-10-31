@@ -57,3 +57,7 @@ The command queries the repository, run and artifact with installation-scoped cr
 5. Prove digest, APK identity, signature and Artifactory verification separately; record actual receipts.
 
 The signer retains final authority; no cross-repository trust is implicit.
+
+## API-first verified artifact checkpoint — 2026-10-31
+
+A **real successful October 29 workflow artifact** has been located and downloaded: run `40799940323`, artifact `12865143006`. Its ZIP digest matches GitHub, and the enclosed unsigned APK digest matches both included checksum and metadata. See [artifact qualification evidence](API_FIRST_ARTIFACT_QUALIFICATION_20261031.md). This resolves the **missing-artifact discovery** blocker, but does **not** prove a newly executed TypeScript CLI handoff, independent Android binary validation, additional signing, or JFrog publication.
