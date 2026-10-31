@@ -70,3 +70,24 @@ The candidate CLI was run with the real IDs above (not the placeholder) and emit
 ## Registry-driven signing-service integration (2026-10-31)
 
 The TypeScript CLI remains read-only and generic: its candidate descriptor is never signing authority. The independent Python signer now uses a service-owned application registry for approved repository policy, scoped installation tokens, and GitHub provenance/artifact paths. The existing POC is the sole approved entry; another app must be explicitly onboarded and independently qualified. Probot/Cloudflare is optional, not required for API-first operation. See [multi-app onboarding](MULTI_APP_ONBOARDING.md). No new signing or publication is claimed by this update.
+
+**Superseded by the checkpoint below:** "the existing POC is the sole approved entry" no longer holds — a second application has since been onboarded and independently qualified read-only.
+
+## Second application checkpoint — 2026-10-31 (later same day)
+
+The checkpoints above cover the first application (`erikg84/apk-signing-poc-app`). This section documents that the **same API-first candidate-descriptor flow was now exercised end-to-end for a second real application**, `erikg84/mock-android-2` (repository ID `1441266259`), using the same generic, repo-agnostic code path — no application-specific logic was added to this integration service.
+
+- **GitHub App installation extended:** installation `177191086` (App ID `5554493`) was extended, via the GitHub web UI (Settings → Installed GitHub Apps → Configure → Repository access), to include `erikg84/mock-android-2` alongside the existing repositories. Installation-scoped API access to this repository's runs/artifacts was independently verified afterward.
+- **Real successful run and artifact:** run `41245117223` (commit `961fa907c6d5c8c88d40e46fc6230f6dd8b312ba`), conclusion `success`, executed on a new repository-scoped Mac Studio runner (`macstudio-mock-android-2`). Real artifact `13059381426` (`unsigned-apk-961fa907c6d5c8c88d40e46fc6230f6dd8b312ba`, 616911 bytes, unexpired).
+- **Candidate CLI run against the real success:**
+
+  ```bash
+  npm run cli -- candidate --installation 177191086 --repo erikg84/mock-android-2 --run 41245117223 --artifact 13059381426
+  ```
+
+  emitted the correct credential-free descriptor (`repository_id: 1441266259`, `workflow_run_id: 41245117223`, `artifact_id: 13059381426`), with no secrets, keys, or artifact bytes included.
+- **Candidate CLI correctly rejects the cancelled run:** the same command run against this repository's own cancelled run `41243533281` fails closed with `RUN_NOT_SUCCESSFUL`, exactly as the first application's cancelled-run case did.
+- **Independent signer qualification:** the Python signer service (`erikg84/mobility-apk-signing-service`) added a second, isolated registry entry (`repository_id=1441266259`, `application_id="com.example.signingpoc2"`, disposable placeholder `signing_profile="poc2-disposable"` / `destination_prefix="signing-poc2/"`) and independently re-verified this exact real artifact end-to-end against the live GitHub App: `qualify_readonly()` returned `qualified: true, signing_authorized: false`, with the computed `apk_sha256` matching the independently re-hashed artifact (`dfc04118e6c6e58ac75110aacab978214946e6cbb64cb1d25d1495ed6b06a2b4`). A mismatched App/installation pair was correctly rejected. **The original application's (`apk-signing-poc-app`) registry entry and policy are completely unchanged.**
+- **No signing or publication occurred for either application in this checkpoint.** This second application has no signing key or Artifactory destination; `ProtectedSigningAdapter` in the signer service still only recognizes the original POC application's profile/application_id. Only read-only candidate-descriptor generation and read-only signer qualification were exercised.
+
+Full evidence for this second application's repository/CI/artifact state lives in `erikg84/mock-android-2`'s own `docs/ONBOARDING.md`; this section records only the cross-repository API-first handoff behavior that is this repository's responsibility.

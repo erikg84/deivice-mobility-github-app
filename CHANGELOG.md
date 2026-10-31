@@ -1,5 +1,12 @@
 # Changelog
 
+## Second-application (mock-android-2) onboarding evidence (2026-10-31)
+
+- Extended GitHub App installation `177191086` (App ID `5554493`) to include `erikg84/mock-android-2` (repository ID `1441266259`) via the GitHub web UI; verified installation-scoped API access afterward.
+- Ran the candidate CLI against real run `41245117223` / artifact `13059381426` for this repository: emitted the correct credential-free descriptor; the same command against this repo's own cancelled run `41243533281` correctly fails closed with `RUN_NOT_SUCCESSFUL`.
+- Confirmed the protected signer (`erikg84/mobility-apk-signing-service`) added an isolated second registry entry and independently re-verified this artifact end-to-end (`qualified: true, signing_authorized: false`), with the original application's registry entry and policy unchanged.
+- No artifact download, APK signing, or Artifactory publishing occurred for either application in this checkpoint.
+
 ## Mac Studio self-hosted runner live (2026-10-31)
 
 - Registered and brought online a dedicated self-hosted runner `macstudio-device-mobility-app` on the Mac Studio (repository-scoped, own `_work` dir, persistent `launchd` service).
