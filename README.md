@@ -66,3 +66,9 @@ The current integration design and verified-versus-pending acceptance gates are 
 ## API-first verified artifact checkpoint — 2026-10-31
 
 A **real successful October 29 workflow artifact** has been located and downloaded: run `40799940323`, artifact `12865143006`. Its ZIP digest matches GitHub, and the enclosed unsigned APK digest matches both included checksum and metadata. See [artifact qualification evidence](docs/API_FIRST_ARTIFACT_QUALIFICATION_20261031.md). This resolves the **missing-artifact discovery** blocker, but does **not** prove a newly executed TypeScript CLI handoff, independent Android binary validation, additional signing, or JFrog publication.
+
+## Mac Studio workflow runner — 2026-10-31
+
+GitHub Actions jobs are configured to target `[self-hosted, macOS, ARM64, macstudio-apk-signing-poc]`. This avoids consuming GitHub-hosted runner compute minutes, but requires an **online runner with all four labels available to each repository**. A repository-scoped runner registered for one repository is not automatically available to the other two. Configure separate runner instances on Mac Studio (with separate work directories) or another supported runner-sharing scope, and install the local Node.js 22, Python 3.12, and Android/JDK tooling needed by each workflow. Never reuse the same runner registration or work directory concurrently. Some account/billing restrictions may still prevent workflows from starting even with a self-hosted runner; validate actual dispatch rather than treating this configuration as proof of recovery.
+
+Do not alter the independent APK signing service, keys, or unrelated local processes when registering the runners. A queued workflow is **not** a passing build.
